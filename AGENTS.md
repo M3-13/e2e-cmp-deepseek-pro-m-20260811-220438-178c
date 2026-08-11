@@ -69,6 +69,8 @@ the full sprint scope, then implement YOUR ticket.
 
    ```python
    from fastapi.testclient import TestClient
+
+
    def test_register_and_login():
        c = TestClient(app)
        assert c.post("/auth/register", json={...}).status_code == 201
@@ -248,7 +250,7 @@ TODAY is therefore a test that must fail tomorrow — and it fails on **main**, 
 both branches were green, where no review looks and no developer owns it.
 
 ```python
-def test_stub_items_list_returns_501():     # ← this is the bug
+def test_stub_items_list_returns_501():  # ← this is the bug
     assert client.get("/api/items/").status_code == 501
 ```
 

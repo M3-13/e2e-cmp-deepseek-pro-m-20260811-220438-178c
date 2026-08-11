@@ -1,5 +1,5 @@
 import sys
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 import click
 
@@ -26,5 +26,5 @@ def done(id: str) -> None:
         raise SystemExit(1)
 
     match.status = "done"
-    match.updated_at = datetime.now(UTC).isoformat()
+    match.updated_at = datetime.now(timezone.utc).isoformat()
     save_tasks(tasks)

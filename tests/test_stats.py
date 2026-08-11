@@ -1,5 +1,5 @@
 import uuid
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 from click.testing import CliRunner
 
@@ -14,8 +14,8 @@ def _make_task(**overrides):
         "status": "pending",
         "priority": "medium",
         "due_date": None,
-        "created_at": datetime.now(UTC).isoformat(),
-        "updated_at": datetime.now(UTC).isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
     }
     defaults.update(overrides)
     return Task(**defaults)

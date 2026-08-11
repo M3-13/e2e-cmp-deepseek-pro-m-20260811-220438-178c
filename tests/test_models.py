@@ -1,5 +1,5 @@
 import uuid
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 import pytest
 
@@ -13,8 +13,8 @@ def _make_task(**overrides):
         "status": "pending",
         "priority": "medium",
         "due_date": None,
-        "created_at": datetime.now(UTC).isoformat(),
-        "updated_at": datetime.now(UTC).isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
     }
     defaults.update(overrides)
     return Task(**defaults)
@@ -96,8 +96,8 @@ class TestFromDict:
             "description": "No due date",
             "status": "pending",
             "priority": "low",
-            "created_at": datetime.now(UTC).isoformat(),
-            "updated_at": datetime.now(UTC).isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
         }
         task = Task.from_dict(d)
         assert task.due_date is None
@@ -117,14 +117,14 @@ class TestFromDict:
             "description": "Bad priority",
             "status": "pending",
             "priority": "invalid",
-            "created_at": datetime.now(UTC).isoformat(),
-            "updated_at": datetime.now(UTC).isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
         }
         with pytest.raises(ValueError):
             Task.from_dict(d)
 
     def test_from_dict_missing_updated_at_falls_back_to_created_at(self):
-        created = datetime.now(UTC).isoformat()
+        created = datetime.now(timezone.utc).isoformat()
         d = {
             "id": str(uuid.uuid4()),
             "description": "No updated_at",
