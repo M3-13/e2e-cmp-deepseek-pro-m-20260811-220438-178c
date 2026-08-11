@@ -1,6 +1,30 @@
+import sys
+from datetime import UTC, datetime
+
 import click
+
+from todo.storage import load_tasks, save_tasks
 
 
 @click.command()
-def done():
-    pass
+@click.argument("id", type=str)
+def done(id: str) -> None:
+    tasks = load_tasks()
+
+    match = None
+    for t in tasks:
+        if t.id.startswith(id):
+            match = t
+            break
+
+    if match is None:
+        print("Aufgabe nicht gefunden.", file=sys.stderr)
+        raise SystemExit(1)
+
+    if match.status == "done":
+        print("Bereits erledigt.", file=sys.stderr)
+        raise SystemExit(1)
+
+    match.status = "done"
+    match.updated_at = datetime.now(UTC).isoformat()
+    save_tasks(tasks)
