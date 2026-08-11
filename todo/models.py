@@ -45,12 +45,13 @@ class Task:
 
     @classmethod
     def from_dict(cls, d: dict) -> "Task":
+        created_at = d["created_at"]
         return cls(
             id=d["id"],
             description=d["description"],
             status=d["status"],
             priority=d["priority"],
             due_date=d.get("due_date"),
-            created_at=d["created_at"],
-            updated_at=d["updated_at"],
+            created_at=created_at,
+            updated_at=d.get("updated_at", created_at),
         )

@@ -122,3 +122,15 @@ class TestFromDict:
         }
         with pytest.raises(ValueError):
             Task.from_dict(d)
+
+    def test_from_dict_missing_updated_at_falls_back_to_created_at(self):
+        created = datetime.now(UTC).isoformat()
+        d = {
+            "id": str(uuid.uuid4()),
+            "description": "No updated_at",
+            "status": "pending",
+            "priority": "medium",
+            "created_at": created,
+        }
+        task = Task.from_dict(d)
+        assert task.updated_at == created
