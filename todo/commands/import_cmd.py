@@ -1,15 +1,12 @@
 import json
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import click
 
-from todo.models import _DATE_PATTERN, Task
+from todo.models import _DATE_PATTERN, _PRIORITY_VALUES, _STATUS_VALUES, Task
 from todo.storage import load_tasks, save_tasks
-
-_VALID_STATUSES = frozenset({"pending", "done"})
-_VALID_PRIORITIES = frozenset({"low", "medium", "high"})
 
 
 def _read_import_tasks(file_path: str) -> list[Task]:
@@ -17,38 +14,46 @@ def _read_import_tasks(file_path: str) -> list[Task]:
     try:
         content = path.read_text(encoding="utf-8")
     except OSError as exc:
-        click.echo(f"Error: cannot read file '{file_path}': {exc}", err=True)
+        click.echo(f"Fehler: Datei '{file_path}' kann nicht gelesen werden: {exc}", err=True)
         raise SystemExit(1) from exc
 
     try:
         data = json.loads(content)
     except json.JSONDecodeError as exc:
-        click.echo(f"Error: '{file_path}' contains invalid JSON: {exc}", err=True)
+        click.echo(f"Fehler: '{file_path}' enthält ungültiges JSON: {exc}", err=True)
         raise SystemExit(1) from exc
 
     if not isinstance(data, list):
-        click.echo(f"Error: '{file_path}' does not contain a JSON array", err=True)
+        click.echo(f"Fehler: '{file_path}' enthält kein JSON-Array", err=True)
         raise SystemExit(1)
 
     tasks: list[Task] = []
     for idx, item in enumerate(data):
         if not isinstance(item, dict):
-            click.echo(f"Error: entry {idx} in '{file_path}' is not a JSON object", err=True)
+            click.echo(f"Fehler: Eintrag {idx} in '{file_path}' ist kein JSON-Objekt", err=True)
             raise SystemExit(1)
         if "description" not in item or not isinstance(item["description"], str):
             click.echo(
-                f"Error: entry {idx} in '{file_path}' is missing a valid 'description' field",
+                f"Fehler: Eintrag {idx} in '{file_path}' hat kein gültiges 'description'-Feld",
                 err=True,
             )
             raise SystemExit(1)
 
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         status = item.get("status", "pending")
-        if status not in _VALID_STATUSES:
+        if status not in _STATUS_VALUES:
+            click.echo(
+                f"Warnung: Eintrag {idx} hat ungültigen Status '{status}', verwende 'pending'.",
+                err=True,
+            )
             status = "pending"
 
         priority = item.get("priority", "medium")
-        if priority not in _VALID_PRIORITIES:
+        if priority not in _PRIORITY_VALUES:
+            click.echo(
+                f"Warnung: Eintrag {idx} hat ungültige Priorität '{priority}', verwende 'medium'.",
+                err=True,
+            )
             priority = "medium"
 
         due_date = item.get("due_date")
@@ -56,8 +61,8 @@ def _read_import_tasks(file_path: str) -> list[Task]:
             not isinstance(due_date, str) or not _DATE_PATTERN.match(due_date)
         ):
             click.echo(
-                f"Error: entry {idx} in '{file_path}' has an invalid 'due_date' "
-                "(expected YYYY-MM-DD)",
+                f"Fehler: Eintrag {idx} in '{file_path}' hat ein ungültiges 'due_date' "
+                "(erwartet: YYYY-MM-DD)",
                 err=True,
             )
             raise SystemExit(1)

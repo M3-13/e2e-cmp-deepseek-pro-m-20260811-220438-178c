@@ -1,5 +1,4 @@
 import json
-import sys
 
 import click
 
@@ -25,5 +24,8 @@ def export(output: str | None):
             with open(output, "w", encoding="utf-8") as f:
                 f.write(json_text)
         except OSError as exc:
-            print(f"Error: could not write to '{output}': {exc}", file=sys.stderr)
+            click.echo(
+                f"Fehler: konnte nicht in '{output}' schreiben: {exc}",
+                err=True,
+            )
             raise SystemExit(1) from exc

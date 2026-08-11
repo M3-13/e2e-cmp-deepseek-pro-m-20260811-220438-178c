@@ -21,27 +21,30 @@ def load_tasks() -> list[Task]:
     try:
         content = STORAGE_FILE.read_text(encoding="utf-8")
     except OSError:
-        print(f"Error: could not read {STORAGE_FILE}", file=sys.stderr)
+        print(f"Fehler: konnte {STORAGE_FILE} nicht lesen", file=sys.stderr)
         return []
     if not content.strip():
         return []
     try:
         data = json.loads(content)
     except json.JSONDecodeError:
-        print(f"Error: {STORAGE_FILE} contains invalid JSON", file=sys.stderr)
+        print(f"Fehler: {STORAGE_FILE} enthält ungültiges JSON", file=sys.stderr)
         return []
     if not isinstance(data, list):
-        print(f"Error: {STORAGE_FILE} does not contain a JSON array", file=sys.stderr)
+        print(f"Fehler: {STORAGE_FILE} enthält kein JSON-Array", file=sys.stderr)
         return []
     tasks: list[Task] = []
     for item in data:
         if not isinstance(item, dict):
-            print(f"Error: skipping non-object entry in {STORAGE_FILE}", file=sys.stderr)
+            print(f"Fehler: überspringe nicht-Objekt-Eintrag in {STORAGE_FILE}", file=sys.stderr)
             continue
         try:
             tasks.append(Task.from_dict(item))
         except (KeyError, ValueError, TypeError) as exc:
-            print(f"Error: skipping invalid task entry in {STORAGE_FILE}: {exc}", file=sys.stderr)
+            print(
+                f"Fehler: überspringe ungültigen Aufgabeneintrag in {STORAGE_FILE}: {exc}",
+                file=sys.stderr,
+            )
             continue
     return tasks
 

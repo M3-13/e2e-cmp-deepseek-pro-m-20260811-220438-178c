@@ -1,14 +1,10 @@
-import re
-import sys
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import click
 
-from todo.models import Task
+from todo.models import _DATE_PATTERN, Task
 from todo.storage import load_tasks, save_tasks
-
-_DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
 @click.command()
@@ -26,13 +22,13 @@ _DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 )
 def add(description: str, priority: str, due: str | None):
     if due is not None and not _DATE_PATTERN.match(due):
-        print(
-            f"Error: due date must be YYYY-MM-DD, got '{due}'",
-            file=sys.stderr,
+        click.echo(
+            f"Fehler: Fälligkeitsdatum muss YYYY-MM-DD sein, nicht '{due}'.",
+            err=True,
         )
         raise SystemExit(1)
 
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
     task = Task(
         id=str(uuid.uuid4()),
         description=description,

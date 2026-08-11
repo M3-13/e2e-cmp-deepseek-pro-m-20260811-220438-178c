@@ -111,4 +111,4 @@ class TestExport:
         runner = CliRunner()
         result = runner.invoke(cli, ["export", "--output", "/nonexistent/path/file.json"])
         assert result.exit_code == 1
-        assert "Error" in result.stderr or "Error" in result.output
+        assert "Fehler" in result.stderr or "Fehler" in result.output
