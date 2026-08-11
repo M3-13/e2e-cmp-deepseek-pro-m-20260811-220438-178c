@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 import click
 
@@ -19,6 +19,6 @@ def edit(id: str, description: str) -> None:
         raise SystemExit(1)
     task = matched[0]
     task.description = description
-    task.updated_at = datetime.now(UTC).isoformat()
+    task.updated_at = datetime.now(timezone.utc).isoformat()
     save_tasks(tasks)
     click.echo(f"Beschreibung von Aufgabe {task.id[:8]} geändert.")
