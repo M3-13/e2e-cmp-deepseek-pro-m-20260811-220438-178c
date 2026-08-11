@@ -1,0 +1,13 @@
+{
+  "runcontract": 1,
+  "services": [
+    {
+      "name": "todo",
+      "dir": ".",
+      "stack": "python",
+      "kind": "cli",
+      "install": [["${python}", "-m", "pip", "install", "-q", "-e", "."]],
+      "start": ["${python}", "-m", "todo.cli", "stats"]
+    }
+  ]
+}

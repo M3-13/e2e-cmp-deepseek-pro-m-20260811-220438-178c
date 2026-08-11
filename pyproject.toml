@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "todo"
+version = "0.1.0"
+description = "Eine einfache CLI-Aufgabenverwaltung"
+requires-python = ">=3.10"
+dependencies = [
+    "click>=8.1,<9",
+]
+
+[project.scripts]
+todo = "todo.cli:cli"
