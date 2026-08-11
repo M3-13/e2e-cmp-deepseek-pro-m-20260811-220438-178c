@@ -36,6 +36,7 @@ ignore = [
     # another spent chasing a finding the pipeline never blocked on. The local check and
     # the blocking tier must ask the same question, or "reproduce it locally" is a lie.
     "B008",
+    "UP017",       # datetime.UTC is Py3.11+; project targets >=3.10
 ]
 
 [lint.per-file-ignores]

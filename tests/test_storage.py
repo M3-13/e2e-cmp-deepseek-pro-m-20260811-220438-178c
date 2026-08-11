@@ -1,5 +1,5 @@
 import json
-from datetime import UTC
+from datetime import datetime, timezone
 
 from todo.models import Task
 from todo.storage import ensure_storage_dir, load_tasks, save_tasks
@@ -7,7 +7,6 @@ from todo.storage import ensure_storage_dir, load_tasks, save_tasks
 
 def _make_task(**overrides):
     import uuid
-    from datetime import datetime
 
     defaults = {
         "id": str(uuid.uuid4()),
@@ -15,8 +14,8 @@ def _make_task(**overrides):
         "status": "pending",
         "priority": "medium",
         "due_date": None,
-        "created_at": datetime.now(UTC).isoformat(),
-        "updated_at": datetime.now(UTC).isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
     }
     defaults.update(overrides)
     return Task(**defaults)
