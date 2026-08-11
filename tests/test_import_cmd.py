@@ -146,7 +146,7 @@ class TestImportInvalidJson:
         runner = CliRunner()
         result = runner.invoke(cli, ["import", "--file", str(import_file)])
         assert result.exit_code == 1
-        assert "invalid JSON" in result.stderr or "invalid JSON" in result.output
+        assert "ungültiges JSON" in result.stderr or "ungültiges JSON" in result.output
 
     def test_not_a_json_array(self, tmp_path, temp_storage_dir, monkeypatch):
         tasks_backing: list = []
@@ -167,7 +167,7 @@ class TestImportInvalidJson:
         runner = CliRunner()
         result = runner.invoke(cli, ["import", "--file", str(import_file)])
         assert result.exit_code == 1
-        assert "JSON array" in result.stderr
+        assert "kein JSON-Array" in result.stderr
 
     def test_missing_description_field(self, tmp_path, temp_storage_dir, monkeypatch):
         tasks_backing: list = []
@@ -214,7 +214,7 @@ class TestImportInvalidJson:
         runner = CliRunner()
         result = runner.invoke(cli, ["import", "--file", str(import_file)])
         assert result.exit_code == 1
-        assert "not a JSON object" in result.stderr
+        assert "kein JSON-Objekt" in result.stderr
 
     def test_missing_file(self, temp_storage_dir, monkeypatch):
         tasks_backing: list = []
@@ -232,7 +232,7 @@ class TestImportInvalidJson:
         runner = CliRunner()
         result = runner.invoke(cli, ["import", "--file", "/nonexistent/path.json"])
         assert result.exit_code == 1
-        assert "cannot read" in result.stderr.lower() or "cannot read" in result.output.lower()
+        assert "nicht gelesen" in result.stderr.lower() or "nicht gelesen" in result.output.lower()
 
     def test_import_preserves_existing_fields(self, tmp_path, temp_storage_dir, monkeypatch):
         tasks_backing: list = []

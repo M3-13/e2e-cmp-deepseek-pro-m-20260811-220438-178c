@@ -88,7 +88,7 @@ class TestLoadTasks:
             tasks = load_tasks()
             assert tasks == []
             stderr = capsys.readouterr().err
-            assert "invalid JSON" in stderr
+            assert "ungültiges JSON" in stderr
         finally:
             storage_mod.STORAGE_FILE = orig_file
 
@@ -125,7 +125,7 @@ class TestLoadTasks:
             assert len(loaded) == 1
             assert loaded[0].id == task.id
             stderr = capsys.readouterr().err
-            assert "skipping" in stderr.lower() or "Error" in stderr
+            assert "überspringe" in stderr.lower() or "Fehler" in stderr
         finally:
             storage_mod.STORAGE_FILE = orig_file
 
@@ -140,7 +140,7 @@ class TestLoadTasks:
             tasks = load_tasks()
             assert tasks == []
             stderr = capsys.readouterr().err
-            assert "array" in stderr.lower()
+            assert "JSON-Array" in stderr
         finally:
             storage_mod.STORAGE_FILE = orig_file
 

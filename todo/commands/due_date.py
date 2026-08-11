@@ -1,11 +1,9 @@
-import re
 from datetime import UTC, datetime
 
 import click
 
+from todo.models import _DATE_PATTERN
 from todo.storage import load_tasks, save_tasks
-
-_DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
 def _parse_date(date_str: str) -> datetime:

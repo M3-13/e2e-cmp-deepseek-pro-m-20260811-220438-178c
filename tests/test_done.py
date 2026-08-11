@@ -30,6 +30,7 @@ class TestDone:
         runner = CliRunner()
         result = runner.invoke(cli, ["done", task.id[:8]])
         assert result.exit_code == 0
+        assert "erledigt markiert" in result.output
 
         from todo.storage import load_tasks
 
@@ -44,6 +45,7 @@ class TestDone:
         runner = CliRunner()
         result = runner.invoke(cli, ["done", task.id])
         assert result.exit_code == 0
+        assert "erledigt markiert" in result.output
 
         from todo.storage import load_tasks
 
@@ -66,7 +68,7 @@ class TestDone:
         runner = CliRunner()
         result = runner.invoke(cli, ["done", "nonexistent"])
         assert result.exit_code == 1
-        assert "Aufgabe nicht gefunden." in result.stderr
+        assert "Keine Aufgabe" in result.stderr
 
     def test_done_updates_timestamp(self, temp_storage_dir):
         task = _make_task(status="pending")
@@ -76,8 +78,20 @@ class TestDone:
         runner = CliRunner()
         result = runner.invoke(cli, ["done", task.id[:8]])
         assert result.exit_code == 0
+        assert "erledigt markiert" in result.output
 
         from todo.storage import load_tasks
 
         tasks = load_tasks()
         assert tasks[0].updated_at != old_updated
+
+    def test_done_ambiguous_prefix(self, temp_storage_dir):
+        prefix = "abcdef12"
+        task_a = _make_task(id=prefix + "-aaaa-bbbb-cccc-000000000001", status="pending")
+        task_b = _make_task(id=prefix + "-aaaa-bbbb-cccc-000000000002", status="pending")
+        save_tasks([task_a, task_b])
+
+        runner = CliRunner()
+        result = runner.invoke(cli, ["done", prefix])
+        assert result.exit_code == 1
+        assert "mehrere" in result.stderr
